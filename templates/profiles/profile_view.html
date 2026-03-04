@@ -1,0 +1,171 @@
+{% extends 'base_portal.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-6 bg-[#F8FAFC] min-h-screen">
+
+    <div class="bg-gradient-to-r from-[#00A36C] to-[#059669] rounded-[2rem] p-8 mb-10 flex justify-between items-center text-white relative shadow-xl overflow-hidden">
+        <div class="flex items-center gap-6 z-10">
+            <div class="relative">
+                {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" class="w-24 h-24 rounded-full border-4 border-white/30 object-cover">
+                {% else %}
+                    <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center text-[#00A36C] text-4xl font-black shadow-inner">
+                        {{ user.email|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                <h2 class="text-3xl font-black tracking-tight">{{ profile.full_name|default:"Farmer" }}</h2>
+                <p class="text-white/80 font-bold uppercase text-xs tracking-widest">Premium Member</p>
+                <div class="mt-3 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2 border border-white/10 w-fit">
+                    <i class="fa-solid fa-envelope"></i> {{ user.email }}
+                </div>
+            </div>
+        </div>
+        <a href="{% url 'profiles:profile_edit' %}" class="bg-white/20 hover:bg-white/30 px-6 py-2.5 rounded-xl font-bold text-sm transition-all border border-white/20 z-10 backdrop-blur-sm">
+            <i class="fa-solid fa-user-pen mr-2"></i>Edit Profile
+        </a>
+        <i class="fa-solid fa-cow absolute -right-4 -bottom-4 text-white/10 text-9xl rotate-12"></i>
+    </div>
+
+    <h3 class="text-lg font-black mb-6 text-gray-700 uppercase tracking-wider">Your Statistics</h3>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex justify-between items-center group hover:shadow-md transition-all">
+            <div>
+                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mb-1">Scans Completed</p>
+                <p class="text-3xl font-black text-blue-600">{{ total_scans }}</p>
+            </div>
+            <div class="bg-blue-50 text-blue-500 w-12 h-12 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex justify-between items-center group hover:shadow-md transition-all">
+            <div>
+                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mb-1">Avg Accuracy</p>
+                <p class="text-3xl font-black text-[#00A36C]">{{ avg_accuracy }}</p>
+            </div>
+            <div class="bg-green-50 text-[#00A36C] w-12 h-12 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fa-solid fa-bullseye"></i>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex justify-between items-center group hover:shadow-md transition-all">
+            <div>
+                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mb-1">Breeds Found</p>
+                <p class="text-3xl font-black text-purple-600">{{ breeds_found|default:"12" }}</p>
+            </div>
+            <div class="bg-purple-50 text-purple-500 w-12 h-12 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex justify-between items-center group hover:shadow-md transition-all">
+            <div>
+                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mb-1">Days Active</p>
+                <p class="text-3xl font-black text-amber-500">{{ days_active }}</p>
+            </div>
+            <div class="bg-amber-50 text-amber-500 w-12 h-12 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="text-lg font-black mb-6 text-gray-700 uppercase tracking-wider">Achievements</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-[#FFF8F0] p-6 rounded-[2rem] border border-orange-100 flex items-center gap-5">
+            <div class="bg-white w-16 h-16 rounded-2xl shadow-sm flex items-center justify-center text-2xl text-orange-400">
+                <i class="fa-solid fa-medal"></i>
+            </div>
+            <div>
+                <h4 class="font-black text-gray-800">First Scan</h4>
+                <p class="text-[10px] text-orange-500 font-black uppercase mb-1">Unlocked</p>
+                <p class="text-xs text-orange-700/70 font-bold">Completed your first classification</p>
+            </div>
+        </div>
+        <div class="bg-[#F0F7FF] p-6 rounded-[2rem] border border-blue-100 flex items-center gap-5">
+            <div class="bg-white w-16 h-16 rounded-2xl shadow-sm flex items-center justify-center text-2xl text-blue-500">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+                <h4 class="font-black text-gray-800">50 Scans</h4>
+                <p class="text-[10px] text-blue-500 font-black uppercase mb-1">In Progress</p>
+                <p class="text-xs text-blue-700/70 font-bold">Reached 50 classifications milestone</p>
+            </div>
+        </div>
+        <div class="bg-[#F2FFF7] p-6 rounded-[2rem] border border-green-100 flex items-center gap-5">
+            <div class="bg-white w-16 h-16 rounded-2xl shadow-sm flex items-center justify-center text-2xl text-[#00A36C]">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <h4 class="font-black text-gray-800">Expert</h4>
+                <p class="text-[10px] text-[#00A36C] font-black uppercase mb-1">Unlocked</p>
+                <p class="text-xs text-green-700/70 font-bold">Achieved 95%+ accuracy rate</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-10">
+        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+            <h3 class="text-lg font-black mb-8 text-gray-800 uppercase tracking-widest">Account Settings</h3>
+            <div class="space-y-8">
+                <div class="flex items-center gap-5 cursor-pointer group">
+                    <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:text-[#00A36C] transition-colors">
+                        <i class="fa-solid fa-sliders text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="font-black text-gray-700 text-sm leading-tight">General Settings</p>
+                        <p class="text-xs font-bold text-gray-400">Update account preferences</p>
+                    </div>
+                </div>
+                <a href="{% url 'profiles:profile_edit' %}" class="flex items-center gap-5 group">
+                    <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:text-[#00A36C] transition-colors">
+                        <i class="fa-solid fa-user-gear text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="font-black text-gray-700 text-sm">Edit Profile</p>
+                        <p class="text-xs font-bold text-gray-400">Update profile information</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+            <h3 class="text-lg font-black mb-8 text-gray-800 uppercase tracking-widest">Account Actions</h3>
+            <div class="space-y-4">
+                <a href="{% url 'password_reset' %}" class="w-full flex items-center justify-between p-5 bg-green-50 text-[#00A36C] rounded-[1.5rem] hover:bg-green-100 transition-all border border-green-100 group">
+                    <div class="flex items-center gap-4">
+                        <i class="fa-solid fa-lock-open text-xl"></i>
+                        <div class="text-left">
+                            <p class="font-black text-sm uppercase">Change Password</p>
+                            <p class="text-[10px] font-bold opacity-70">Update your security</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                </a>
+
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full flex items-center justify-between p-5 bg-[#FF4D4D] text-white rounded-[1.5rem] hover:bg-red-600 transition-all shadow-lg shadow-red-200">
+                        <div class="flex items-center gap-4">
+                            <i class="fa-solid fa-right-from-bracket text-xl"></i>
+                            <div class="text-left">
+                                <p class="font-black text-sm uppercase">Logout</p>
+                                <p class="text-[10px] font-bold text-white/70">Sign out from your account</p>
+                            </div>
+                        </div>
+                    </button>
+                </form>
+            </div>
+            
+            <div class="mt-10 flex items-center gap-4 border-t border-gray-50 pt-6">
+                <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center text-2xl">
+                    <i class="fa-solid fa-cow text-gray-400"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-gray-800 uppercase tracking-widest">Livestock Classifier</p>
+                    <p class="text-[10px] font-bold text-gray-400">Version 1.0.0 | AI-Powered System</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

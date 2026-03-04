@@ -1,0 +1,12 @@
+{% extends user.is_authenticated|yesno:"base2.html,base1.html" %}
+{% load i18n %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        {% block dashboard_content %}
+            {% include "partials/chatbot_body.html" %}
+        {% endblock %}
+    {% else %}
+        {% include "partials/chatbot_body.html" %}
+    {% endif %}
+{% endblock %}

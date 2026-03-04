@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Farmer Portal | CattleBreed AI{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --primary-green: #0F9D58;
+            --soft-mint: #F6FFF8;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--soft-mint);
+        }
+
+        .rounded-agri {
+            border-radius: 16px;
+        }
+
+        .shadow-soft {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ✅ NEW: Consistent Agri Card Border */
+        .card-border {
+            border: 1px solid rgba(15, 157, 88, 0.08);
+        }
+
+        .nav-link:hover {
+            color: #0F9D58;
+            background: rgba(15, 157, 88, 0.05);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+<header class="bg-[#0F9D58] text-white shadow-lg h-20 flex items-center px-6 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
+
+        <div class="flex items-center gap-3">
+            <a href="{% url 'portal:user_dashboard' %}" class="flex items-center gap-3 hover:opacity-90 transition">
+                <i class="fa-solid fa-cow text-2xl"></i>
+                <span class="text-xl font-bold tracking-tight">Breed Recognition</span>
+            </a>
+        </div>
+
+        <div class="flex items-center gap-4 md:gap-8">
+
+            <!-- 🔔 Notifications -->
+            <a href="{% url 'notifications:notification_list' %}"
+               class="relative p-2 hover:bg-white/10 rounded-full transition">
+                <i class="fa-solid fa-bell text-xl"></i>
+
+                {% if notification_count > 0 %}
+                <span
+                    class="absolute top-1 right-1 bg-red-500 text-[10px] w-4 h-4 rounded-full flex items-center justify-center border-2 border-[#0F9D58] font-bold">
+                    {{ notification_count }}
+                </span>
+                {% endif %}
+            </a>
+
+            <!-- 👤 Profile -->
+            <a href="{% url 'profiles:profile_view' %}"
+               class="flex items-center gap-3 border-l border-white/20 pl-6 group">
+
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="hidden md:block">
+                    <p class="text-[10px] font-bold uppercase opacity-70 leading-none mb-1">
+                        Authenticated
+                    </p>
+                    <p class="text-sm font-semibold leading-none">
+                        {{ user.email|truncatechars:15 }}
+                    </p>
+                </div>
+            </a>
+        </div>
+    </div>
+</header>
+
+<main class="flex-grow p-6 max-w-7xl mx-auto w-full">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="py-8 text-center bg-white/50 border-t border-gray-100">
+    <p class="text-gray-400 text-[10px] uppercase tracking-[0.3em] font-bold">
+        CattleBreed AI System &bull; Precision Agriculture Node
+    </p>
+</footer>
+
+</body>
+</html>

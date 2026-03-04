@@ -1,0 +1,64 @@
+# ---------------- Python ----------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+genai_env/
+
+# ---------------- Django ----------------
+db.sqlite3
+/media/
+staticfiles/
+
+# Environment variables (SECRET DATA)
+.env
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# ---------------- ML Models (Large Files) ----------------
+*.h5
+*.keras
+ml_models/
+
+# OS Files
+.DS_Store
+Thumbs.db
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environments
+venv/
+venv310/
+tf_env/
+env/
+
+# Django
+db.sqlite3
+*.log
+media/
+
+# Model Files (IMPORTANT)
+*.h5
+*.keras
+*.hdf5
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

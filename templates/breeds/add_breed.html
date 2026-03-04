@@ -1,0 +1,106 @@
+{% extends 'partials/base_admin.html' %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-purple-600 to-fuchsia-600 -mx-10 -mt-10 px-10 py-16 text-white mb-12">
+    <h1 class="text-4xl font-black">
+        {% if edit_mode %} Edit Breed {% else %} Add New Breed {% endif %}
+    </h1>
+    <p class="text-white/80 mt-2 max-w-xl">
+        Complete breed details for AI recognition and livestock education.
+    </p>
+</div>
+
+<div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl border border-gray-100 p-12 -mt-20">
+
+<form method="post" enctype="multipart/form-data" class="space-y-10">
+    {% csrf_token %}
+
+    <!-- BASIC INFO -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+            <label class="font-bold text-sm">Breed Name</label>
+            {{ form.name }}
+        </div>
+
+        <div>
+            <label class="font-bold text-sm">Category</label>
+            {{ form.category }}
+        </div>
+    </div>
+
+    <!-- MEDIA -->
+    <div>
+        <label class="font-bold text-sm">Thumbnail Image</label>
+        {{ form.thumbnail }}
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div>
+        <label class="font-bold text-sm">Description</label>
+        {{ form.description }}
+    </div>
+
+    <!-- ORIGIN + PRODUCTION -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+            <label class="font-bold text-sm">Origin Location</label>
+            {{ form.origin_location }}
+        </div>
+
+        <div>
+            <label class="font-bold text-sm">Milk Yield</label>
+            {{ form.milk_yield }}
+        </div>
+
+        <div>
+            <label class="font-bold text-sm">Milk Fat %</label>
+            {{ form.milk_fat }}
+        </div>
+    </div>
+
+    <!-- EXTRA METRICS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+            <label class="font-bold text-sm">Daily Yield (optional)</label>
+            {{ form.daily_yield }}
+        </div>
+
+        <div>
+            <label class="font-bold text-sm">Color Description</label>
+            {{ form.color_description }}
+        </div>
+    </div>
+
+    <!-- TRAITS -->
+    <div>
+        <label class="font-bold text-sm">Key Traits (comma separated)</label>
+        {{ form.traits }}
+    </div>
+
+    <!-- VIDEO -->
+    <div>
+        <label class="font-bold text-sm">Reference Video</label>
+        {{ form.video_link }}
+    </div>
+
+    <!-- ACTIVE -->
+    <div class="flex items-center gap-3">
+        {{ form.is_active }}
+        <span class="font-bold text-sm">Mark as Active</span>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="flex justify-end gap-4 pt-6">
+        <a href="{% url 'breeds:admin_breed_manage' %}"
+           class="px-6 py-3 rounded-xl border font-bold">
+            Cancel
+        </a>
+
+        <button type="submit"
+                class="px-10 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black shadow-lg">
+            Save Breed
+        </button>
+    </div>
+</form>
+</div>
+{% endblock %}

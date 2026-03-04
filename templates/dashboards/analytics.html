@@ -1,0 +1,128 @@
+{% extends 'partials/base_admin.html' %}
+
+{% block content %}
+
+<!-- ================= METRICS ================= -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+
+    <div class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg">
+        <p class="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
+            Total Training Images
+        </p>
+        <h2 class="text-4xl font-black text-indigo-600">
+            {{ total_training_images }}
+        </h2>
+    </div>
+
+    <div class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg">
+        <p class="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
+            Validated
+        </p>
+        <h2 class="text-4xl font-black text-emerald-600">
+            {{ validated_count }}
+        </h2>
+    </div>
+
+    <div class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg">
+        <p class="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
+            Pending Review
+        </p>
+        <h2 class="text-4xl font-black text-orange-500">
+            {{ pending_count }}
+        </h2>
+    </div>
+
+</div>
+
+<!-- ================= BREED DISTRIBUTION ================= -->
+<div class="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-lg mb-12">
+    <h3 class="text-xl font-black text-gray-800 mb-6">
+        Breed Distribution (AI Identifications)
+    </h3>
+
+    <canvas id="breedChart" height="120"></canvas>
+</div>
+
+<!-- ================= DATASET REVIEW ================= -->
+<div class="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-lg">
+
+    <h3 class="text-xl font-black text-gray-800 mb-6">
+        Pending Dataset Validation
+    </h3>
+
+    <div class="space-y-4">
+
+        {% for scan in recent_uploads %}
+        <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-100">
+
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100">
+                    <img src="{{ scan.image.url }}" class="w-full h-full object-cover">
+                </div>
+
+                <div>
+                    <p class="font-black text-gray-800">
+                        {{ scan.breed_name }}
+                    </p>
+                    <p class="text-xs text-gray-400 font-bold">
+                        {{ scan.cattle_type }} • {{ scan.scanned_at|date:"M d, Y H:i" }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <a href="{% url 'portal:dataset_validate' scan.id %}"
+                   class="bg-emerald-600 text-white px-5 py-2 rounded-xl text-xs font-black hover:bg-emerald-700 transition">
+                    Approve
+                </a>
+
+                <a href="{% url 'portal:dataset_discard' scan.id %}"
+                   class="bg-red-50 text-red-600 px-5 py-2 rounded-xl text-xs font-black hover:bg-red-600 hover:text-white transition">
+                    Discard
+                </a>
+            </div>
+
+        </div>
+        {% empty %}
+        <p class="text-gray-400 font-bold">
+            No pending images for review.
+        </p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- ================= CHART ================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('breedChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ labels|safe }},
+        datasets: [{
+            label: 'Scans',
+            data: {{ data|safe }},
+            backgroundColor: '#10b981',
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { precision: 0 }
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

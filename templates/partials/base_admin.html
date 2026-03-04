@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Livestock AI | Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind + Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: Inter, sans-serif;
+            background: #f8fafc;
+        }
+
+        /* SIDEBAR WIDTH CONTROL (IMPORTANT) */
+        .sidebar {
+            width: 18rem;              /* expanded */
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 6rem;               /* collapsed */
+        }
+
+        /* NAV LINKS */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #475569;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .active {
+            background: linear-gradient(90deg, #0f9d58, #10b981);
+            color: #ffffff;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+        }
+
+        /* COLLAPSED STATE */
+        .sidebar.collapsed .label {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .brand {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .logout-btn {
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen">
+
+<!-- ================= SIDEBAR ================= -->
+<aside id="adminSidebar"
+       class="sidebar bg-white border-r border-gray-100 p-6 flex flex-col">
+
+    <!-- BRAND -->
+    <div class="brand flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3 overflow-hidden">
+            <div class="bg-emerald-100 w-12 h-12 rounded-xl flex items-center justify-center text-xl">
+                🐄
+            </div>
+            <div class="label whitespace-nowrap">
+                <h1 class="font-black text-gray-800 leading-none">Livestock AI</h1>
+                <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">
+                    Admin Panel
+                </p>
+            </div>
+        </div>
+
+        <!-- TOGGLE BUTTON -->
+        <button onclick="toggleSidebar()" class="text-gray-400 hover:text-emerald-600">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+
+    <hr class="border-gray-100 mb-4">
+
+    <!-- NAV -->
+    <nav class="space-y-2 flex-1">
+        <a href="{% url 'portal:admin_dashboard' %}"
+           id="nav-dashboard"
+           class="nav-link">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span class="label">Dashboard</span>
+        </a>
+
+        <a href="{% url 'portal:admin_analytics' %}"
+           id="nav-analytics"
+           class="nav-link">
+            <i class="fa-solid fa-chart-column"></i>
+            <span class="label">Analytics</span>
+        </a>
+
+        <a href="{% url 'portal:admin_dataset_review' %}"
+            class="nav-link">
+                <i class="fa-solid fa-layer-group"></i>
+                <span class="label">Dataset Review</span>
+        </a>
+
+        <a href="{% url 'breeds:admin_breed_manage' %}"
+           class="nav-link">
+            <i class="fa-solid fa-dna"></i>
+            <span class="label">Manage Breeds</span>
+        </a>
+    </nav>
+
+    <hr class="border-gray-100 my-6">
+
+    <!-- LOGOUT -->
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button
+            class="logout-btn w-full flex items-center justify-center gap-3
+                   bg-red-50 hover:bg-red-600 hover:text-white
+                   text-red-600 font-black py-3 rounded-xl transition">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span class="label">Logout</span>
+        </button>
+    </form>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<main class="flex-1">
+
+    <!-- HEADER -->
+    <header
+        class="h-20 bg-white border-b border-gray-100
+               flex items-center justify-between px-10 sticky top-0 z-20">
+        <div>
+            <h2 class="text-xl font-black text-gray-800">
+                Admin Dashboard
+            </h2>
+            <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">
+                System Overview
+            </p>
+        </div>
+
+        <div class="text-sm font-bold text-gray-500">
+            Logged in as
+            <span class="text-emerald-600">
+                {{ request.user.email }}
+            </span>
+        </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <div class="p-10 max-w-7xl mx-auto">
+        {% block content %}{% endblock %}
+    </div>
+
+</main>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+    function toggleSidebar() {
+        document
+            .getElementById('adminSidebar')
+            .classList.toggle('collapsed');
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const path = window.location.pathname;
+
+        if (path.includes('analytics')) {
+            document.getElementById('nav-analytics')?.classList.add('active');
+        } else {
+            document.getElementById('nav-dashboard')?.classList.add('active');
+        }
+    });
+</script>
+
+</body>
+</html>

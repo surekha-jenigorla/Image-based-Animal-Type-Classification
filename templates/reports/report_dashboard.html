@@ -1,0 +1,101 @@
+{% extends 'partials/base_user.html' %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-[#F59E0B] to-[#D97706] -mx-6 -mt-6 p-8 mb-8 text-white rounded-b-[2rem] shadow-lg">
+    <div class="flex items-center gap-4 mb-2">
+        <a href="{% url 'portal:user_dashboard' %}" class="hover:opacity-80">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1 class="text-2xl font-bold">Statistics & Insights</h1>
+    </div>
+    <p class="opacity-90 text-sm">Analyze your livestock recognition performance</p>
+</div>
+
+<div class="grid grid-cols-2 gap-4 mb-8">
+    <div class="bg-white p-6 rounded-agri shadow-soft border-l-4 border-[#F59E0B]">
+        <h3 class="text-2xl font-bold text-gray-900">{{ total_scans }}</h3>
+        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Scans</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-agri shadow-soft border-l-4 border-teal-500">
+        <h3 class="text-2xl font-bold text-gray-900">{{ breeds_count }}</h3>
+        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Unique Breeds</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <div class="bg-white p-6 rounded-agri shadow-soft border border-gray-100">
+        <h4 class="font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-chart-pie text-[#F59E0B]"></i>
+            Breed Distribution
+        </h4>
+    <div class="h-[320px]">
+        <canvas id="breedChart"></canvas>
+    </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-agri shadow-soft border border-gray-100">
+        <h4 class="font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-chart-column text-green-500"></i>
+            Monthly Activity
+        </h4>
+       <div class="h-[320px]">
+            <canvas id="scanChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<a href="{% url 'reports:download_report' %}">
+    <button class="w-full mt-8 bg-gray-900 text-white py-4 rounded-xl font-bold uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3">
+        <i class="fa-solid fa-file-pdf"></i>
+        Download Full PDF Report
+    </button>
+</a>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Pie Chart
+new Chart(document.getElementById('breedChart'), {
+    type: 'pie',
+    data: {
+        labels: {{ breed_labels|safe }},
+        datasets: [{
+            data: {{ breed_values|safe }},
+            backgroundColor: ['#F59E0B', '#14B8A6', '#2563EB', '#8B5CF6', '#EC4899']
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+
+});
+
+// Bar Chart
+new Chart(document.getElementById('scanChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ month_labels|safe }},
+        datasets: [{
+            label: 'Scans',
+            data: {{ month_values|safe }},
+            backgroundColor: '#0F9D58',
+            borderRadius: 8
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+</script>
+
+{% endblock %}

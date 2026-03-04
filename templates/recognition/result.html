@@ -1,0 +1,71 @@
+{% extends 'base_portal.html' %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-800">AI Classifier</h1>
+        <p class="text-gray-500 text-sm">Upload & identify livestock</p>
+    </div>
+</div>
+
+<div class="max-w-5xl mx-auto">
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        
+        <div class="p-6 flex justify-between items-center border-b border-gray-50">
+            <div class="flex items-center gap-4">
+                <div class="bg-orange-600 p-3 rounded-2xl shadow-sm">
+                    <i class="fa-solid fa-cow text-white text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Cattle Identified!</h2>
+                    <p class="text-gray-500 text-sm">Classification completed with {{ result.confidence_score }}% confidence</p>
+                </div>
+            </div>
+            <a href="{% url 'recognition:upload_image' %}" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2.5 rounded-xl transition-all text-sm font-bold">
+                <i class="fa-solid fa-arrows-rotate"></i> Scan Another
+            </a>
+        </div>
+
+        <div class="p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <div class="relative">
+                    <div class="rounded-3xl overflow-hidden border-4 border-white shadow-2xl">
+                        <img src="{{ result.image.url }}" class="w-full h-[400px] object-cover" alt="Livestock">
+                    </div>
+                    <div class="absolute top-6 right-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-lg border border-white flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-green-500"></i>
+                        <span class="text-green-700 font-black text-sm">{{ result.confidence_score }}%</span>
+                    </div>
+                </div>
+
+                <div class="space-y-10">
+                    <div>
+                        <p class="text-gray-400 text-xs font-black uppercase tracking-[0.15em] mb-3">Breed Classification</p>
+                        <h3 class="text-6xl font-black text-gray-900 mb-4 tracking-tight">{{ result.breed_name }}</h3>
+                        <span class="bg-orange-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-md">
+                            {{ result.cattle_type }}
+                        </span>
+                    </div>
+
+                    <div class="bg-green-50 p-6 rounded-3xl border border-green-100 inline-block min-w-[200px]">
+                        <p class="text-green-600 text-[11px] font-black uppercase tracking-wider mb-2">Confidence Score</p>
+                        <p class="text-4xl font-black text-green-700">{{ result.confidence_score }}%</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                        <a href="{% url 'history:history_list' %}" class="flex-1 flex items-center justify-center gap-3 border-2 border-green-500 text-green-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-50 transition-all">
+                            <i class="fa-solid fa-chart-line text-lg"></i> View History
+                        </a>
+                        <button class="flex-1 flex items-center justify-center gap-3 border-2 border-purple-500 text-purple-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-purple-50 transition-all">
+                        <a href="{% url 'breeds:breed_list' %}" class="nav-link" id="nav-gallery">
+                            <i class="fa-solid fa-book-open-reader text-lg"></i> Learn More
+                        </a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

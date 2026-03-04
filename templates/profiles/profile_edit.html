@@ -1,0 +1,113 @@
+{% extends 'base_portal.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto p-4 md:p-10">
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{% url 'profiles:profile_view' %}" class="w-10 h-10 bg-white shadow-sm border border-gray-100 rounded-xl flex items-center justify-center text-gray-400 hover:text-[#00A36C] transition-all">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="text-2xl font-black text-gray-800 leading-none">Edit Profile</h1>
+            <p class="text-xs font-bold text-gray-400 mt-1 uppercase tracking-widest">Personal Information</p>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 text-center relative overflow-hidden">
+            <div class="relative inline-block group">
+                {% if profile.profile_picture %}
+                    <img id="imagePreview" src="{{ profile.profile_picture.url }}" class="w-32 h-32 rounded-full border-4 border-[#00A36C]/20 shadow-2xl object-cover mx-auto transition group-hover:brightness-90">
+                {% else %}
+                    <div id="imagePreviewPlaceholder" class="w-32 h-32 bg-[#00A36C] rounded-full border-4 border-white shadow-2xl flex items-center justify-center text-white text-4xl font-black mx-auto">
+                        {{ user.email|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+                
+                <label for="profile_picture" class="absolute bottom-0 right-0 bg-[#00A36C] text-white w-10 h-10 rounded-full border-4 border-white flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-all">
+                    <i class="fa-solid fa-camera"></i>
+                    <input type="file" name="profile_picture" id="profile_picture" class="hidden" accept="image/*" onchange="previewImage(this)">
+                </label>
+            </div>
+            <p class="text-xs font-black text-gray-400 uppercase tracking-widest mt-4">Change Profile Photo</p>
+            <div class="absolute top-0 right-0 p-4 opacity-5">
+                <i class="fa-solid fa-image text-8xl"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Full Name</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                        <input type="text" name="full_name" value="{{ profile.full_name }}" 
+                               class="w-full bg-gray-50 border-none rounded-2xl p-4 pl-12 text-sm font-bold text-gray-700 focus:ring-2 focus:ring-[#00A36C]/20 outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Phone Number</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                        <input type="text" name="phone_number" value="{{ profile.phone_number }}" 
+                               class="w-full bg-gray-50 border-none rounded-2xl p-4 pl-12 text-sm font-bold text-gray-700 focus:ring-2 focus:ring-[#00A36C]/20 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Location</label>
+                <div class="relative">
+                    <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                    <input type="text" name="farm_location" value="{{ profile.farm_location }}" 
+                           class="w-full bg-gray-50 border-none rounded-2xl p-4 pl-12 text-sm font-bold text-gray-700 focus:ring-2 focus:ring-[#00A36C]/20 outline-none">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Email Address (Locked)</label>
+                <div class="relative">
+                    <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                    <input type="email" value="{{ user.email }}" disabled
+                           class="w-full bg-gray-100 border-none rounded-2xl p-4 pl-12 text-sm font-bold text-gray-400 cursor-not-allowed">
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <button type="submit" class="w-full bg-[#00A36C] text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-green-100 hover:bg-[#008f5d] transition-all flex items-center justify-center gap-3">
+                <i class="fa-solid fa-floppy-disk"></i> Save Profile Changes
+            </button>
+            <a href="{% url 'profiles:profile_view' %}" class="w-full bg-white text-gray-400 py-4 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] text-center border border-gray-100 hover:bg-gray-50 transition-all">
+                Cancel and Go Back
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('imagePreview');
+                if(preview) {
+                    preview.src = e.target.result;
+                } else {
+                    // If placeholder was there, replace it
+                    const placeholder = document.getElementById('imagePreviewPlaceholder');
+                    const newImg = document.createElement('img');
+                    newImg.id = 'imagePreview';
+                    newImg.src = e.target.result;
+                    newImg.className = "w-32 h-32 rounded-full border-4 border-[#00A36C]/20 shadow-2xl object-cover mx-auto";
+                    placeholder.parentNode.replaceChild(newImg, placeholder);
+                }
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+{% endblock %}

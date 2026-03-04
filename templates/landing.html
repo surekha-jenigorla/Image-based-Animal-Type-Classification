@@ -1,0 +1,144 @@
+{% extends "base1.html" %}
+{% block content %}
+
+<div style="display:flex; gap:60px; align-items:flex-start; flex-wrap:wrap;">
+
+<!-- LEFT -->
+<div style="flex:1; min-width:420px;">
+
+<div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+<div style="width:48px;height:48px;background:#0F9D58;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;">🐄</div>
+<div>
+<div style="font-weight:700;font-size:20px;">Livestock AI</div>
+<div style="font-size:13px;color:#6B7280;">Intelligent Classification</div>
+</div>
+</div>
+
+<div style="background:#D1FAE5;color:#065F46;padding:6px 14px;border-radius:30px;display:inline-block;font-size:13px;font-weight:500;margin-bottom:20px;">
+<i class="fa-solid fa-sparkles"></i> AI-Powered Technology
+</div>
+
+<h1 style="font-size:48px;line-height:1.2;margin:0 0 16px 0;">
+Identify Livestock Breeds <br>
+with <span style="color:#0F9D58;">AI Precision</span>
+</h1>
+
+<p style="color:#6B7280;font-size:16px;max-width:600px;">
+Advanced artificial intelligence for instant cattle and buffalo breed identification.
+Get detailed insights, health assessments, and comprehensive breed information in seconds.
+</p>
+
+<h3 class="section-title">Why Choose Livestock AI?</h3>
+
+<div class="card feature-card fade-blue">
+<div style="font-size:22px;color:#2563EB;"><i class="fa-solid fa-bolt"></i></div>
+<div><strong>Instant Classification</strong>
+<div style="color:#6B7280;">Get results in under 3 seconds with 95%+ accuracy using deep learning models</div></div>
+</div>
+
+<div class="card feature-card fade-purple">
+<div style="font-size:22px;color:#9333EA;"><i class="fa-solid fa-chart-line"></i></div>
+<div><strong>Comprehensive Analytics</strong>
+<div style="color:#6B7280;">Track scan history, view trends, and access detailed breed information</div></div>
+</div>
+
+<div class="card feature-card fade-green">
+<div style="font-size:22px;color:#16A34A;"><i class="fa-solid fa-book"></i></div>
+<div><strong>Breed Library</strong>
+<div style="color:#6B7280;">Access detailed information on 50+ cattle and buffalo breeds</div></div>
+</div>
+
+<div class="card feature-card fade-orange">
+<div style="font-size:22px;color:#EA580C;"><i class="fa-solid fa-clock"></i></div>
+<div><strong>History & Tracking</strong>
+<div style="color:#6B7280;">Maintain records of all scans with timestamps and detailed results</div></div>
+</div>
+
+<!-- STATS -->
+<div style="display:flex; gap:60px; margin-top:30px;">
+
+<div class="stat">
+<div class="stat-number" style="color:#16A34A;">95%</div>
+<div class="stat-label">Accuracy</div>
+</div>
+
+<div class="stat">
+<div class="stat-number" style="color:#2563EB;">{{ total_breeds }}+</div>
+<div class="stat-label">Breeds</div>
+</div>
+
+<div class="stat">
+<div class="stat-number" style="color:#9333EA;">{{ total_users }}+</div>
+<div class="stat-label">Users</div>
+</div>
+
+</div>
+
+</div>
+<!-- RIGHT LOGIN -->
+<div style="flex:1; min-width:360px;">
+<div class="card login-card" style="padding:40px; margin-top:220px;">
+
+<h2 style="text-align:center;margin-top:0;">Welcome Back</h2>
+<p style="text-align:center;color:#6B7280;">Sign in to continue to Livestock AI</p>
+
+<form method="POST" action="{% url 'login' %}">
+{% csrf_token %}
+
+<label>Email</label>
+<input name="username" type="email" required
+style="width:100%;padding:14px;border-radius:12px;border:1px solid #E5E7EB;margin-bottom:14px;">
+
+<label>Password</label>
+<div style="position:relative;">
+<input id="landing-password" name="password" type="password" required
+style="width:100%;padding:14px;border-radius:12px;border:1px solid #E5E7EB;">
+<button type="button" onclick="toggleLandingPassword()" style="
+position:absolute;
+right:14px;
+top:50%;
+transform:translateY(-50%);
+background:none;
+border:none;
+cursor:pointer;
+color:#6B7280;">
+<i id="landing-eye" class="fa-solid fa-eye"></i>
+</button>
+</div>
+
+<div style="text-align:right;margin:8px 0 20px;">
+<a href="{% url 'password_reset' %}" class="link-underline">Forgot Password?</a>
+</div>
+
+<button type="submit" class="btn-primary">Sign In</button>
+
+</form>
+
+<div style="text-align:center;margin:16px 0;color:#9CA3AF;">or</div>
+
+<div style="text-align:center;">
+Don't have an account?
+<a href="{% url 'signup' %}" class="link-underline">Sign up</a>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script>
+function toggleLandingPassword() {
+    const field = document.getElementById("landing-password");
+    const icon = document.getElementById("landing-eye");
+
+    if (field.type === "password") {
+        field.type = "text";
+        icon.classList.replace("fa-eye","fa-eye-slash");
+    } else {
+        field.type = "password";
+        icon.classList.replace("fa-eye-slash","fa-eye");
+    }
+}
+</script>
+
+{% endblock %}

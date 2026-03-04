@@ -1,0 +1,91 @@
+{% extends 'partials/base_user.html' %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] -mx-6 -mt-6 p-8 mb-8 text-white rounded-b-[2rem] shadow-lg">
+    <div class="flex items-center gap-4 mb-2 mt-20">
+        <a href="{% url 'portal:user_dashboard' %}" class="hover:opacity-80">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1 class="text-2xl font-bold">Notifications</h1>
+    </div>
+    <p class="opacity-90 text-sm">{{ unread_count }} unread notifications</p>
+</div>
+
+<div class="flex gap-4 mb-8">
+    <a href="?filter=all"
+       class="flex-1 py-3 text-center rounded-xl font-bold text-xs uppercase tracking-widest transition-all
+       {% if filter_type == 'all' %}bg-gray-900 text-white shadow-lg{% else %}bg-white text-gray-400 border border-gray-100{% endif %}">
+        All
+    </a>
+    <a href="?filter=unread"
+       class="flex-1 py-3 text-center rounded-xl font-bold text-xs uppercase tracking-widest transition-all
+       {% if filter_type == 'unread' %}bg-gray-900 text-white shadow-lg{% else %}bg-white text-gray-400 border border-gray-100{% endif %}">
+        Unread ({{ unread_count }})
+    </a>
+</div>
+
+<div class="space-y-4">
+    {% for n in notifications %}
+    <div class="relative bg-white p-5 rounded-agri shadow-soft border-l-4
+        {% if n.notification_type == 'success' %}border-green-500
+        {% elif n.notification_type == 'warning' %}border-orange-500
+        {% else %}border-blue-500{% endif %}
+        flex gap-4 items-start">
+
+        <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0
+            {% if n.notification_type == 'success' %}bg-green-50 text-green-600
+            {% elif n.notification_type == 'warning' %}bg-orange-50 text-orange-600
+            {% else %}bg-blue-50 text-blue-600{% endif %}">
+
+            {% if n.notification_type == 'success' %}
+                <i class="fa-solid fa-circle-check"></i>
+            {% elif n.notification_type == 'warning' %}
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            {% elif n.notification_type == 'feature' %}
+                <i class="fa-solid fa-star"></i>
+            {% else %}
+                <i class="fa-solid fa-circle-info"></i>
+            {% endif %}
+        </div>
+
+        <div class="flex-grow">
+            <div class="flex justify-between items-start mb-1">
+                <h4 class="font-bold text-gray-900 text-sm">{{ n.title }}</h4>
+                {% if not n.is_read %}
+                    <span class="bg-blue-600 text-white text-[8px] px-2 py-0.5 rounded-full uppercase font-black">
+                        New
+                    </span>
+                {% endif %}
+            </div>
+            <p class="text-xs text-gray-500 leading-relaxed mb-2">{{ n.message }}</p>
+            <span class="text-[9px] font-bold text-gray-300 uppercase">
+                <i class="fa-solid fa-clock mr-1"></i> {{ n.created_at|timesince }} ago
+            </span>
+        </div>
+
+        <div class="flex flex-col gap-2 border-l border-gray-50 pl-4">
+            {% if not n.is_read %}
+                <a href="{% url 'notifications:mark_read' n.pk %}"
+                   class="text-blue-500 hover:text-blue-700 transition"
+                   title="Mark as Read">
+                    <i class="fa-solid fa-check-double text-xs"></i>
+                </a>
+            {% endif %}
+            <a href="{% url 'notifications:delete_notification' n.pk %}"
+               class="text-gray-300 hover:text-red-500 transition"
+               title="Delete">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-24">
+        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-bell-slash text-gray-200 text-3xl"></i>
+        </div>
+        <h4 class="font-bold text-gray-900">No notifications</h4>
+        <p class="text-xs text-gray-400 mt-1">You're all caught up!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

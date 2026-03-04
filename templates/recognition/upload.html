@@ -1,0 +1,145 @@
+{% extends 'base_portal.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    
+    <div class="bg-white rounded-[3rem] p-12 border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.1)] mb-10 transition-all">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-black text-gray-800">Upload Animal Photo</h2>
+            <p class="text-gray-400 font-medium mt-2">Take a clear photo showing the full body or side profile</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="uploadForm">
+            {% csrf_token %}
+            <input type="file" name="image" id="fileInput" class="hidden" accept="image/*">
+            
+            <div onclick="document.getElementById('fileInput').click()" 
+                 class="relative group cursor-pointer border-4 border-dashed border-purple-100 rounded-[2.5rem] p-16 transition-all hover:border-purple-300 hover:bg-purple-50/30">
+                
+                <div class="absolute inset-0 flex items-center justify-center opacity-10 group-hover:opacity-20 transition-opacity">
+                    <div class="w-64 h-64 bg-purple-500 rounded-full blur-[100px]"></div>
+                </div>
+
+                <div class="relative z-10 text-center">
+                    <div class="w-24 h-24 bg-gradient-to-br from-fuchsia-400 to-purple-600 rounded-full mx-auto flex items-center justify-center shadow-[0_15px_35px_rgba(168,85,247,0.4)] mb-8 transition-transform group-hover:scale-110 group-hover:rotate-3">
+                        <i class="fa-solid fa-cloud-arrow-up text-white text-3xl"></i>
+                    </div>
+
+                    <h3 class="text-2xl font-extrabold text-gray-800">
+                        📸 Click to Upload or Drag & Drop
+                    </h3>
+                    <p class="text-purple-500 font-bold mt-3 tracking-wide">
+                        JPG, PNG • Clear lighting recommended • Max 10MB
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-emerald-50/50 backdrop-blur-md rounded-[3rem] p-10 border border-emerald-100 shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
+        <div class="flex items-center space-x-3 mb-8">
+            <div class="text-emerald-500 text-xl font-black italic">i</div>
+            <h3 class="text-xl font-black text-emerald-900 tracking-tight">Photography Tips for Best Results</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8">
+            <div class="flex items-start group">
+                <div class="bg-white p-3 rounded-2xl shadow-sm text-emerald-500 mr-5 transition-transform group-hover:rotate-6 group-hover:scale-110">
+                    <i class="fa-solid fa-camera text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-emerald-900 text-sm">Natural Lighting</h4>
+                    <p class="text-xs text-emerald-700/70 font-bold mt-1">Use natural daylight for best results</p>
+                </div>
+            </div>
+            <div class="flex items-start group">
+                <div class="bg-white p-3 rounded-2xl shadow-sm text-emerald-500 mr-5 transition-transform group-hover:rotate-6 group-hover:scale-110">
+                    <i class="fa-solid fa-maximize text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-emerald-900 text-sm">Full Body Shot</h4>
+                    <p class="text-xs text-emerald-700/70 font-bold mt-1">Show full body or clear side profile</p>
+                </div>
+            </div>
+            <div class="flex items-start group">
+                <div class="bg-white p-3 rounded-2xl shadow-sm text-emerald-500 mr-5 transition-transform group-hover:rotate-6 group-hover:scale-110">
+                    <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-emerald-900 text-sm">Distinctive Features</h4>
+                    <p class="text-xs text-emerald-700/70 font-bold mt-1">Focus on horns, face, and body</p>
+                </div>
+            </div>
+            <div class="flex items-start group">
+                <div class="bg-white p-3 rounded-2xl shadow-sm text-emerald-500 mr-5 transition-transform group-hover:rotate-6 group-hover:scale-110">
+                    <i class="fa-solid fa-ruler-horizontal text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-emerald-900 text-sm">Safe Distance</h4>
+                    <p class="text-xs text-emerald-700/70 font-bold mt-1">Maintain safe distance from animal</p>
+                </div>
+            </div>
+            <div class="flex items-start group">
+                <div class="bg-white p-3 rounded-2xl shadow-sm text-emerald-500 mr-5 transition-transform group-hover:rotate-6 group-hover:scale-110">
+                    <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-emerald-900 text-sm">Clear Background</h4>
+                    <p class="text-xs text-emerald-700/70 font-bold mt-1">Ensure background is uncluttered</p>
+                </div>
+            </div>
+            <div class="flex items-start group">
+                <div class="bg-white p-3 rounded-2xl shadow-sm text-emerald-500 mr-5 transition-transform group-hover:rotate-6 group-hover:scale-110">
+                    <i class="fa-solid fa-image text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-emerald-900 text-sm">High Resolution</h4>
+                    <p class="text-xs text-emerald-700/70 font-bold mt-1">Use high quality camera settings</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loadingOverlay" class="hidden fixed inset-0 bg-white/80 backdrop-blur-xl flex items-center justify-center z-50">
+    <div class="text-center">
+        <div class="relative w-32 h-32 mx-auto mb-10">
+            <div class="absolute inset-0 border-4 border-emerald-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-emerald-500 rounded-full border-t-transparent animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-4xl animate-bounce">🐄</span>
+            </div>
+        </div>
+        <h3 class="text-3xl font-black text-gray-800">AI Analyzing Image...</h3>
+        <p class="text-gray-400 font-bold mt-2 uppercase tracking-widest text-xs">Identifying Livestock Breed</p>
+    </div>
+</div>
+
+<script>
+document.getElementById('fileInput').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+        // Show loading
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+        // Submit form
+        document.getElementById('uploadForm').submit();
+    }
+});
+
+// Drag and drop logic
+const dropzone = document.querySelector('div[onclick]');
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+    }, false);
+});
+
+dropzone.addEventListener('drop', e => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    document.getElementById('fileInput').files = files;
+    document.getElementById('loadingOverlay').classList.remove('hidden');
+    document.getElementById('uploadForm').submit();
+});
+</script>
+{% endblock %}

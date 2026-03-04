@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livestock AI - Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            margin: 0;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        .glass-sidebar { background: #ffffff; border-right: 1px solid #f1f5f9; }
+        .sidebar-transition { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        .nav-link {
+            display: flex; align-items: center; padding: 0.75rem 1rem;
+            margin: 0.2rem 0.75rem; border-radius: 0.75rem;
+            color: #64748b; font-size: 0.95rem; font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        /* Active State Classes */
+        .active-home { background-color: #059669 !important; color: white !important; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); }
+        .active-about { background: linear-gradient(90deg, #4f46e5, #3b82f6) !important; color: white !important; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .active-dashboard { background: linear-gradient(90deg, #7c3aed, #6366f1) !important; color: white !important; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
+        .active-classifier { background: linear-gradient(90deg, #a855f7, #8b5cf6) !important; color: white !important; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3); }
+        .active-gallery { background: linear-gradient(90deg, #059669, #10b981) !important; color: white !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .active-history { background: linear-gradient(90deg, #f97316, #fb923c) !important; color: white !important; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
+        .active-profile { background: linear-gradient(90deg, #9333ea, #db2777) !important; color: white !important; box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3); }
+
+        .nav-link:hover:not([class*="active-"]) { background-color: #f1f5f9; color: #059669; }
+        .hidden-text { display: none; }
+
+        /* Profile Drawer Styles */
+        #profile-drawer { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); }
+        #profile-drawer.open { transform: translateX(0); }
+        .drawer-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .drawer-overlay.show { opacity: 1; pointer-events: auto; }
+    </style>
+</head>
+<body class="flex min-h-screen">
+
+    <aside id="sidebar" class="sidebar-transition w-64 glass-sidebar flex flex-col h-screen sticky top-0 z-20">
+        <div class="p-6 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-100 p-2 rounded-xl flex items-center justify-center">
+                    <span class="text-xl">🐄</span>
+                </div>
+                <div class="sidebar-label">
+                    <h1 class="font-extrabold text-gray-800 leading-none tracking-tight">Livestock AI</h1>
+                    <p class="text-[10px] text-gray-400 mt-1 font-bold uppercase tracking-wider">Classifier v1.0</p>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()" class="text-gray-300 hover:text-emerald-600">
+                <i id="toggleIcon" class="fa-solid fa-chevron-left"></i>
+            </button>
+        </div>
+        
+        <nav class="flex-1 mt-2">
+            <a href="{% url 'portal:home' %}" class="nav-link" id="nav-home"><i class="fa-solid fa-house w-6"></i> <span class="sidebar-label ml-3">Home</span></a>
+            <a href="{% url 'portal:about' %}" class="nav-link" id="nav-about"><i class="fa-solid fa-circle-info w-6"></i> <span class="sidebar-label ml-3">About</span></a>            
+            <a href="{% url 'portal:user_dashboard' %}" class="nav-link" id="nav-dashboard"><i class="fa-solid fa-chart-line w-6"></i> <span class="sidebar-label ml-3">Dashboard</span></a>
+            <a href="{% url 'recognition:upload_image' %}" class="nav-link" id="nav-classifier"><i class="fa-solid fa-expand w-6"></i> <span class="sidebar-label ml-3">AI Classifier</span></a>
+            <a href="{% url 'breeds:breed_list' %}" class="nav-link" id="nav-gallery"><i class="fa-solid fa-image w-6"></i> <span class="sidebar-label ml-3">Animal Gallery</span></a>
+            <a href="{% url 'history:history_list' %}" class="nav-link" id="nav-history"><i class="fa-solid fa-clock-rotate-left w-6"></i> <span class="sidebar-label ml-3">Scan History</span></a>
+            <a href="{% url 'profiles:profile_view' %}" class="nav-link" id="nav-profile"><i class="fa-solid fa-user w-6"></i> <span class="sidebar-label ml-3">Profile</span></a>
+        </nav>
+
+        <div class="p-4 border-t border-gray-50">
+            <div onclick="toggleProfileDrawer()" class="flex items-center space-x-3 bg-slate-50 p-3 rounded-2xl cursor-pointer hover:bg-emerald-50 transition-colors border border-transparent hover:border-emerald-100">
+                {% if user.profile.profile_picture %}
+                    <img src="{{ user.profile.profile_picture.url }}" class="w-10 h-10 rounded-full object-cover">
+                {% else %}
+                    <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold">
+                        {{ user.email|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+                <div class="sidebar-label">
+                    <p class="text-sm font-bold text-gray-700 leading-tight">{{ user.profile.full_name|default:"Farmer" }}</p>
+                    <p class="text-[10px] text-gray-400 font-medium">View Quick Profile</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 min-w-0">
+        <header class="h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-10 sticky top-0 z-10">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800" id="header-title">Loading...</h2>
+                <p class="text-xs text-gray-400 font-medium italic" id="header-subtitle">Welcome to Livestock AI</p>
+            </div>
+            <a href="{% url 'recognition:upload_image' %}" class="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700 hover:-translate-y-0.5">
+                <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Classify Now
+            </a>
+        </header>
+
+        <div class="p-10 max-w-7xl mx-auto">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <div id="drawer-overlay" onclick="toggleProfileDrawer()" class="drawer-overlay fixed inset-0 bg-black/20 backdrop-blur-sm z-30"></div>
+    
+    <div id="profile-drawer" class="fixed right-0 top-0 h-screen w-96 bg-white shadow-2xl z-40 flex flex-col overflow-y-auto">
+        <div class="bg-[#00A36C] p-6 text-white relative">
+            <button onclick="toggleProfileDrawer()" class="absolute top-6 right-6 text-white/80 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="flex items-center space-x-4 mt-4">
+                <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center text-[#00A36C] text-2xl font-black shadow-lg">
+                    {{ user.email|slice:":1"|upper }}
+                </div>
+                <div>
+                    <h3 class="text-xl font-extrabold leading-tight">{{ user.profile.full_name|default:"Farmer" }}</h3>
+                    <p class="text-xs text-white/80 font-medium">{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 space-y-8">
+            <div>
+                <h4 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-4">Your Statistics</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-2xl font-black text-blue-600">{{ drawer_total_scans }}</p>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase">Scans</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-2xl font-black text-[#00A36C]">{{ drawer_avg_accuracy }}</p>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase">Accuracy</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-2xl font-black text-purple-600">{{ drawer_breeds }}</p>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase">Breeds</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-2xl font-black text-orange-500">{{ drawer_active_days }}</p>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase">Active</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-4">Achievements</h4>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-4 bg-[#FFF4E5] p-3 rounded-2xl border border-orange-100">
+                        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-orange-400"><i class="fa-solid fa-trophy"></i></div>
+                        <div>
+                            <p class="text-xs font-black text-gray-800">First Scan</p>
+                            <p class="text-[10px] text-orange-600 font-bold">Completed first classification</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 bg-[#EEF2FF] p-3 rounded-2xl border border-blue-100 opacity-60">
+                        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-500"><i class="fa-solid fa-bolt"></i></div>
+                        <div>
+                            <p class="text-xs font-black text-gray-800">50 Scans</p>
+                            <p class="text-[10px] text-blue-600 font-bold">In Progress</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-4">Settings</h4>
+                <div class="space-y-1">
+                    <a href="{% url 'profiles:profile_edit' %}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-all text-gray-600 group">
+                        <i class="fa-solid fa-user-pen text-gray-400 group-hover:text-emerald-600"></i>
+                        <span class="text-sm font-bold">Edit Profile</span>
+                    </a>
+                    <hr class="my-3 border-gray-100">
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-red-50 transition-all text-red-500 font-bold text-sm">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-gray-50 flex items-center gap-3">
+                <span class="text-2xl grayscale opacity-50">🐄</span>
+                <div>
+                    <p class="text-[10px] font-black text-gray-800 uppercase">Livestock Classifier</p>
+                    <p class="text-[9px] font-bold text-gray-400">© 2024 AI Systems. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar Toggle Logic
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const labels = document.querySelectorAll('.sidebar-label');
+            const icon = document.getElementById('toggleIcon');
+            if (sidebar.classList.contains('w-64')) {
+                sidebar.classList.replace('w-64', 'w-20');
+                labels.forEach(l => l.classList.add('hidden-text'));
+                icon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+            } else {
+                sidebar.classList.replace('w-20', 'w-64');
+                labels.forEach(l => l.classList.remove('hidden-text'));
+                icon.classList.replace('fa-chevron-right', 'fa-chevron-left');
+            }
+        }
+
+        // Profile Drawer Toggle Logic
+        function toggleProfileDrawer() {
+            const drawer = document.getElementById('profile-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('show');
+            
+            // Disable scrolling when drawer is open
+            if(drawer.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Active Link Highlighting
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+            const headerTitle = document.getElementById('header-title');
+            const headerSub = document.getElementById('header-subtitle');
+
+            document.querySelectorAll('.nav-link').forEach(el => el.className = 'nav-link');
+
+            if (currentPath.includes('about')) {
+                document.getElementById('nav-about').classList.add('active-about');
+                headerTitle.innerText = "About";
+                headerSub.innerText = "Learn more about Livestock AI";
+            } else if (currentPath.includes('dashboard')) {
+                document.getElementById('nav-dashboard').classList.add('active-dashboard');
+                headerTitle.innerText = "Dashboard";
+                headerSub.innerText = "Analytics & Insights";
+            } else if (currentPath.includes('ai-lens')) {
+                document.getElementById('nav-classifier').classList.add('active-classifier');
+                headerTitle.innerText = "AI Classifier";
+                headerSub.innerText = "Upload & identify livestock";
+            } else if (currentPath.includes('breeds')) {
+                document.getElementById('nav-gallery').classList.add('active-gallery');
+                headerTitle.innerText = "Animal Gallery";
+                headerSub.innerText = "Learn about different breeds";
+            } else if (currentPath.includes('history')) {
+                document.getElementById('nav-history').classList.add('active-history');
+                headerTitle.innerText = "Scan History";
+                headerSub.innerText = "View all your classifications";
+            } else if (currentPath.includes('profile')) {
+                document.getElementById('nav-profile').classList.add('active-profile');
+                headerTitle.innerText = "Profile";
+                headerSub.innerText = "Manage your account";
+            } else {
+                document.getElementById('nav-home').classList.add('active-home');
+                headerTitle.innerText = "Home";
+                headerSub.innerText = "Welcome to Livestock AI";
+            }
+        });
+    </script>
+</body>
+</html>

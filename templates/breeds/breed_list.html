@@ -1,0 +1,143 @@
+{% extends 'base_portal.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Animal Gallery</h1>
+            <p class="text-gray-500 font-bold text-sm uppercase tracking-widest mt-1">Explore and Compare Breeds</p>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <div class="relative group">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors"></i>
+                <input type="text" placeholder="Search breeds..." 
+                       class="pl-12 pr-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full sm:w-64 font-bold text-sm transition-all">
+            </div>
+            <select class="px-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm font-bold text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                <option>Sort by: Name</option>
+                <option>Highest Yield</option>
+                <option>Highest Fat</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex items-center space-x-4 mb-10 overflow-x-auto pb-4 scrollbar-hide">
+        <a href="?category=All" 
+           class="whitespace-nowrap px-8 py-3 rounded-2xl text-sm font-black uppercase tracking-widest transition-all
+           {% if category_filter == 'All' or not category_filter %} bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white shadow-lg shadow-purple-100 {% else %} bg-white text-gray-400 border border-gray-100 hover:text-gray-600 {% endif %}">
+           🐄 All Breeds
+        </a>
+        <a href="?category=Cattle" 
+           class="whitespace-nowrap px-8 py-3 rounded-2xl text-sm font-black uppercase tracking-widest transition-all
+           {% if category_filter == 'Cattle' %} bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-100 {% else %} bg-white text-gray-400 border border-gray-100 hover:text-gray-600 {% endif %}">
+           🐂 Cattle Breeds
+        </a>
+        <a href="?category=Buffalo" 
+           class="whitespace-nowrap px-8 py-3 rounded-2xl text-sm font-black uppercase tracking-widest transition-all
+           {% if category_filter == 'Buffalo' %} bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-100 {% else %} bg-white text-gray-400 border border-gray-100 hover:text-gray-600 {% endif %}">
+           🐃 Buffalo Breeds
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        {% for breed in breeds %}
+        <a href="{% url 'breeds:breed_detail' breed.id %}" class="flex flex-col bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-[0_15px_40px_rgba(0,0,0,0.06)] transition-all duration-500 hover:shadow-[0_25px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 group h-full">
+            
+            <div class="relative h-64 overflow-hidden bg-slate-100">
+                {% if breed.thumbnail_url %}
+                    <img src="{{ breed.thumbnail_url }}" alt="{{ breed.name }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                {% else %}
+                    <div class="flex items-center justify-center h-full text-slate-300 bg-slate-100">
+                        <i class="fa-solid fa-image text-5xl"></i>
+                    </div>
+                {% endif %}
+
+                <div class="absolute top-6 left-6">
+                    <span class="{% if breed.category == 'Cattle' %} bg-orange-600 {% else %} bg-blue-600 {% endif %} text-white text-[10px] font-black px-4 py-1.5 rounded-xl uppercase tracking-tighter shadow-lg">
+                        {{ breed.category }}
+                    </span>
+                </div>
+
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div class="absolute bottom-6 left-8 right-6">
+                    <h3 class="text-3xl font-black text-white tracking-tight drop-shadow-sm">{{ breed.name }}</h3>
+                    <p class="text-white/80 text-xs font-bold uppercase">{{ breed.category }} breed</p>
+                </div>
+            </div>
+
+            <div class="p-8 flex-1 flex flex-col">
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-orange-50/80 p-4 rounded-2xl border border-orange-100 text-center transition-colors group-hover:bg-orange-100/50">
+                        <p class="text-[10px] font-black text-orange-400 uppercase mb-1">Milk Fat</p>
+                        <p class="text-sm font-black text-orange-900">{{ breed.milk_fat }}</p>
+                    </div>
+                    <div class="bg-blue-50/80 p-4 rounded-2xl border border-blue-100 text-center transition-colors group-hover:bg-blue-100/50">
+                        <p class="text-[10px] font-black text-blue-400 uppercase mb-1">Daily Yield</p>
+                        <p class="text-sm font-black text-blue-900">{{ breed.daily_yield }}</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3 mb-6 bg-slate-50/50 p-3 rounded-2xl border border-slate-100">
+                    <div class="w-2.5 h-2.5 rounded-full shadow-inner 
+                        {% if 'Black' in breed.color_description %} bg-gray-900 
+                        {% elif 'Brown' in breed.color_description or 'Fawn' in breed.color_description %} bg-amber-800 
+                        {% elif 'White' in breed.color_description %} bg-slate-100 border border-slate-200
+                        {% else %} bg-slate-300 {% endif %}">
+                    </div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">
+                        Color: <span class="text-gray-800">{{ breed.color_description }}</span>
+                    </p>
+                </div>
+
+                <div class="mt-auto">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Key Traits</p>
+                    <div class="space-y-3">
+                        {% for trait in breed.traits_list %}
+                        <div class="flex items-start text-sm font-bold text-gray-600 leading-tight">
+                            <i class="fa-solid fa-check text-emerald-500 mt-0.5 mr-3 text-xs"></i>
+                            <span>{{ trait }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="col-span-full py-20 text-center">
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-gray-50 rounded-full mb-6 text-gray-200">
+                <i class="fa-solid fa-cow text-5xl"></i>
+            </div>
+            <h3 class="text-xl font-black text-gray-900">No breeds found</h3>
+            <p class="text-gray-500 font-medium">Try adjusting your filters or search terms.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="border-t border-gray-100 pt-16 mb-16">
+        <h3 class="text-2xl font-black text-gray-800 mb-8 ml-2">Quick Comparison</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-emerald-50/50 border border-emerald-100 rounded-[3rem] p-6 md:p-10 flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
+                <div class="bg-white p-5 rounded-3xl shadow-md text-3xl shrink-0">🐄</div>
+                <div>
+                    <h4 class="text-xl font-black text-emerald-900 mb-2">Cattle</h4>
+                    <p class="text-sm text-emerald-700/70 font-bold leading-relaxed">
+                        Smaller milk yield, higher fat content. Suited for dairy farming. Best suited for temperate climates.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-blue-50/50 border border-blue-100 rounded-[3rem] p-6 md:p-10 flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
+                <div class="bg-white p-5 rounded-3xl shadow-md text-3xl shrink-0">🐃</div>
+                <div>
+                    <h4 class="text-xl font-black text-blue-900 mb-2">Buffalo</h4>
+                    <p class="text-sm text-blue-700/70 font-bold leading-relaxed">
+                        Higher milk yield, very high fat content. Best suited for cheese and butter. Heat and disease resistant.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
