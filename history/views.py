@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from recognition.models import BreedScan
 
 
@@ -85,3 +86,32 @@ def history_delete(request, scan_id):
         scan.delete()
 
     return redirect("history:history_list")
+
+
+# --------------------------------------------------
+# Download Report View
+# --------------------------------------------------
+@login_required
+def download_report(request, id):
+    scan = get_object_or_404(
+        BreedScan,
+        id=id,
+        user=request.user
+    )
+
+    content = f"""
+===== Cattle Scan Report =====
+
+Breed Name     : {scan.breed_name}
+Category       : {scan.cattle_type}
+Confidence     : {scan.confidence_score}%
+Health Status  : {get_health_status(scan.confidence_score)}
+Scanned On     : {scan.scanned_at}
+
+==============================
+"""
+
+    response = HttpResponse(content, content_type='text/plain')
+    response['Content-Disposition'] = f'attachment; filename="report_{scan.id}.txt"'
+
+    return response
